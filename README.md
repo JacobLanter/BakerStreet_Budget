@@ -20,6 +20,22 @@ Visualization: Kibana \
 Orchestration: Docker Compose \
 External API: YNAB API
 
+## First-Time Setup 
+
+After the initial ```docker compose up``, a password must be set for the kibana_system user or Kibana will fail to communicate with Elasticsearch due to authentication errors.
+
+```docker exec -it Elasticsearch bin/elasticsearch-reset-password -u kibana_system -i```
+
+Enter the new password when prompted. Once completed, stop the services:
+
+``docker compose down``
+
+Add the kibana_system password to your .env file, then restart the stack:
+
+```docker compose up```
+
+After this initial setup, Kibana should be able to authenticate and communicate with Elasticsearch correctly.
+
 ## Development Notes
 
 This project is developed with the assistance of AI-powered coding tools, including Cursor, to improve iteration speed and code quality. All design decisions, architecture, and final implementations are reviewed and controlled manually.
