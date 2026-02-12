@@ -1,6 +1,6 @@
 # YNAB_Dashboard
 
-This project pulls data from my personal YNAB account using the YNAB API and converts all active budget and goal values into percentages before storing or visualizing anything. Instead of keeping dollar amounts, categories like eating out or discretionary spending are represented only by the percentage remaining, so no raw financial data is saved.
+This project pulls data from a user's YNAB account using the YNAB API and converts all active budget and goal values into percentages before storing or visualizing anything. Instead of keeping dollar amounts, categories like eating out or discretionary spending are represented only by the percentage remaining, so no raw financial data is saved.
 
 The backend processes both short-term budget categories and long-term goals, such as retirement savings and paying off a house, and indexes those percentage-based metrics into Elasticsearch. Kibana is then used to build a simple dashboard that highlights the most important metrics at a glance.
 
