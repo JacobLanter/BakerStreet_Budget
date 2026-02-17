@@ -1,10 +1,9 @@
-# Will contain main function to run the application
-from YNAB import get_ynab_data
+from YNAB import get_ynab_data, print_categories
+
 
 def main() -> None:
     ynab_data = get_ynab_data()
-    print(ynab_data)
-
+    print_categories(ynab_data)
 
 if __name__ == "__main__":
     main()
