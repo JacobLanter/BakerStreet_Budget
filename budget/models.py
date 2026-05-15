@@ -1,5 +1,7 @@
 from django.db import models
 
+# Defines the structure of one budget category record.
+# Django uses this model to create a PostgreSQL table where each row is one category.
 class Category(models.Model):
     ynab_id = models.UUIDField(unique=True)
 
