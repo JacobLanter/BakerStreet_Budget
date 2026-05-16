@@ -1,0 +1,38 @@
+{
+  "data": {
+    "category_groups": [
+      {
+        "id": "123e4567-e89b-12d3-a456-426614174000",
+        "name": "string",
+        "hidden": true,
+        "deleted": true,
+        "categories": [
+          {
+            "id": "123e4567-e89b-12d3-a456-426614174000",
+            "category_group_id": "123e4567-e89b-12d3-a456-426614174000",
+            "category_group_name": "string",
+            "name": "string",
+            "hidden": true,
+            "original_category_group_id": null,
+            "note": null,
+            "budgeted": 1,
+            "activity": 1,
+            "balance": 1,
+            "...": "[Additional Properties Truncated]",
+            "balance_formatted": "string",
+            "balance_currency": 1,
+            "activity_formatted": "string",
+            "activity_currency": 1,
+            "budgeted_formatted": "string",
+            "budgeted_currency": 1,
+            "goal_target_formatted": null,
+            "goal_target_currency": null,
+            "goal_under_funded_formatted": null,
+            "goal_under_funded_currency": null
+          }
+        ]
+      }
+    ],
+    "server_knowledge": 1
+  }
+}
