@@ -2,7 +2,7 @@
 
 <ul>
   {% for category in categories %}
-    <li>{{ category.category_group_name }}: {{ category.name }} - {{ category.balance }}</li>
+    <li>{{ category.category_group_name }}: {{ category.name }} - Current balance: {{ category.balance_display }}</li>
   {% empty %}
     <li>No categories found.</li>
   {% endfor %}

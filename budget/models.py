@@ -26,3 +26,27 @@ class Category(models.Model):
 
     def __str__(self):
         return f"{self.category_group_name}: {self.name}"
+
+    # Helper method converts the milliunits from YNAB into standard Dollar format
+    def format_milliunits(self, amount):
+        if amount is None:
+            return ""
+
+        return f"${amount / 1000:,.2f}"
+
+    # @property treats methods like an attribute of the table not as a function. EX: category.balance.display
+    @property
+    def balance_display(self):
+        return self.format_milliunits(self.balance)
+
+    @property
+    def budgeted_display(self):
+        return self.format_milliunits(self.budgeted)
+
+    @property
+    def activity_display(self):
+        return self.format_milliunits(self.activity)
+
+    @property
+    def goal_target_display(self):
+        return self.format_milliunits(self.goal_target)

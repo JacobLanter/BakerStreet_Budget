@@ -1,0 +1,101 @@
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<h1 style="text-align: center;">GOALS DASHBOARD</h1>
+{% if request.user.is_authenticated %}
+    <form method="post" action="{% url 'sync_ynab_now' %}" style="position: absolute; right: 0;">
+      {% csrf_token %}
+      <button type="submit">Sync YNAB</button>
+    </form>
+  {% endif %}
+<br>
+<h2 style="text-align: center;">Saving Goals</h2>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px;">
+  {% for goal in target_goal_charts %}
+    <div style="width: 250px; height: 300px; position: relative; margin: 20px; text-align: center;">
+      <div style="width: 250px; height: 250px; position: relative;">
+        <canvas id="targetGoalChart{{ forloop.counter }}"></canvas>
+      </div>
+
+      <h3>{{ goal.name }}</h3>
+    </div>
+
+    <script>
+      const centerTextPlugin{{ forloop.counter }} = {
+        id: "targetCenterText{{ forloop.counter }}",
+        beforeDraw(chart) {
+          const { width, height, ctx } = chart;
+          ctx.restore();
+
+          ctx.font = "bold 22px Arial";
+          ctx.textBaseline = "middle";
+          ctx.textAlign = "center";
+
+          const text = "{{ goal.percentage }}%";
+          const x = width / 1.95;
+          const y = height / 1.75;
+
+          ctx.fillText(text, x, y);
+          ctx.save();
+        }
+      };
+
+      new Chart(document.getElementById("targetGoalChart{{ forloop.counter }}"), {
+        type: "doughnut",
+        data: {
+          labels: ["Complete", "Remaining"],
+          datasets: [{
+            label: "{{ goal.name }}",
+            data: [{{ goal.percentage }}, {{ goal.remaining }}],
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false
+        },
+        plugins: [centerTextPlugin{{ forloop.counter }}]
+      });
+    </script>
+  {% endfor %}
+
+  {% if not selected_need_category_ids %}
+    <form method="get">
+      <h2>Select Spending Goals</h2>
+
+      {% for category in spending_goals %}
+        <label>
+          <input
+            type="checkbox"
+            name="need_categories"
+            value="{{ category.id }}"
+          >
+          {{ category.name }}
+        </label>
+        <br>
+      {% endfor %}
+
+      <button type="submit">Show selected</button>
+    </form>
+  {% endif %}
+</div>
+
+<h2 style="text-align: center;">Spending Goals</h2>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px;">
+  {% for category in selected_need_categories %}
+    <div style="
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    ">
+      <h3>{{ category.name }}</h3>
+
+      <p>
+        Current Balance:
+        {{ category.balance_display }}
+      </p>
+
+    </div>
+  {% endfor %}
+</div>
