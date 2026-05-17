@@ -1,171 +1,137 @@
 # BakerStreet Budget
 
-BakerStreet Budget is a learning project for building a focused Django/PostgreSQL dashboard that syncs category data from the YNAB API and visualizes budget progress.
+BakerStreet Budget is a small Django dashboard I built to make my YNAB categories easier to review at a glance. Instead of opening YNAB and digging through category groups, the app syncs category data into PostgreSQL and gives me a focused view of saving goals, spending categories, and budget progress.
 
-The goal is not to start with a finished app. The goal is to give you a clean project map so you can build the pieces yourself and understand what each part is doing.
+The project is intentionally narrow: it is not trying to replace YNAB. It is a personal dashboard for the category information I care about most.
 
-## MVP Goal
+## What It Does
 
-Build a dashboard that:
+- Syncs category data from the YNAB API into a local PostgreSQL database.
+- Stores category names, balances, budgeted amounts, activity, goal types, goal targets, and raw YNAB data.
+- Filters out hidden, deleted, and internal YNAB categories.
+- Displays selectable saving goals and spending goals on a dashboard.
+- Uses Chart.js doughnut charts to show saving-goal progress.
+- Includes a dashboard sync button that can refresh YNAB data from the app.
+- Runs locally with Docker Compose.
+- Loads secrets and runtime settings from environment variables.
 
-- Connects Django to PostgreSQL with Docker Compose
-- Loads secrets and settings from environment variables
-- Calls the YNAB API
-- Syncs budget, category group, and category data into local models
-- Converts YNAB milliunits into `Decimal` dollar amounts
-- Calculates budget progress values in a service layer
-- Renders a dashboard with summary cards, progress bars, and one Chart.js chart
+## Why I Built It
 
-## File Structure
+I wanted a simple page that showed the YNAB categories I check most often without making budgeting feel heavier than it needs to be. The result is a lightweight dashboard that pulls in real YNAB data and presents the useful parts in one place.
 
-Current starter scaffold:
+## Tech Stack
+
+- Python
+- Django
+- PostgreSQL
+- Docker Compose
+- YNAB API
+- Chart.js
+
+I used Codex and ChatGPT as development assistants while building this project, mainly for debugging, refactoring, and thinking through Django and Docker configuration.
+
+## Project Structure
 
 ```text
 BakerStreet_Budget/
+  budget/
+    management/commands/sync_ynab_categories.py
+    templates/budget/dashboard.html
+    templates/budget/category_list.html
+    models.py
+    urls.py
+    utils.py
+    views.py
+  config/
+    settings.py
+    urls.py
   docker-compose.yml
   Dockerfile
   requirements.txt
   manage.py
-  config/
-  budget/
-  .env
   .env.example
-  .gitignore
-  README.md
-```
-
-Notes:
-
-- `.env` is for local secrets and should not be committed.
-- `.env.example` documents the environment variables the project needs.
-- `config/` is the Django project settings folder.
-- `budget/` is the Django app folder.
-- `.dockerignore` may also exist as a Docker helper, but it does not need to be part of the main learning structure.
-
-Inside `config/`, Django will eventually have:
-
-```text
-config/
-  __init__.py
-  settings.py
-  urls.py
-  asgi.py
-  wsgi.py
-```
-
-Inside `budget/`, start small:
-
-```text
-budget/
-  __init__.py
-  admin.py
-  apps.py
-  models.py
-  views.py
-  migrations/
-```
-
-Files to add later, when you reach that step:
-
-```text
-budget/urls.py
-budget/forms.py
-budget/services/ynab_client.py
-budget/services/ynab_sync.py
-budget/services/progress.py
-budget/management/commands/sync_ynab.py
-budget/templates/budget/base.html
-budget/templates/budget/dashboard.html
-budget/templates/budget/category_list.html
-budget/templates/budget/sync.html
-static/css/styles.css
-static/js/charts.js
-```
-
-## What Each Piece Is For
-
-`config/settings.py`  
-Configure Django, PostgreSQL, static files, and environment variables.
-
-`budget/models.py`  
-Define `YnabBudget`, `CategoryGroup`, and `Category`.
-
-`budget/views.py`  
-Start with a simple placeholder view later, then connect it to templates and services.
-
-## YNAB Endpoint
-
-Use this endpoint for the MVP:
-
-```text
-GET /budgets/{budget_id}/categories
-```
-
-Start with:
-
-```text
-YNAB_BUDGET_ID=last-used
-```
-
-## Money Conversion
-
-YNAB returns money in milliunits:
-
-```text
-1000 milliunits = $1.00
-```
-
-Use `Decimal`, not float.
-
-## Minimal First Steps
-
-1. Make Django boot locally in Docker.
-2. Load `.env` values in `config/settings.py`.
-3. Configure PostgreSQL in `settings.py` using the `DB_*` environment variables.
-4. Add `budget` to `INSTALLED_APPS`.
-5. Run `python manage.py check`.
-6. Run the first migration command against Postgres.
-
-After that, add the app pieces one at a time:
-
-1. Models
-2. Admin
-3. YNAB client
-4. Sync service
-5. Management command
-6. Progress service
-7. Views and URLs
-8. Templates
-9. Static CSS and Chart.js
-
-## Development Commands
-
-These commands are the target workflow once you have filled in the Django entrypoint and settings.
-
-```bash
-docker compose up --build
-docker compose exec web python manage.py migrate
-docker compose exec web python manage.py createsuperuser
-docker compose down
 ```
 
 ## Environment Variables
 
-Copy `.env.example` to `.env` when you are ready to run locally:
+Copy the example file and fill in your local values:
 
 ```bash
 cp .env.example .env
 ```
 
-Then fill in your real values, especially:
+Required values:
 
-```text
-YNAB_ACCESS_TOKEN=replace-me
+```env
+SECRET_KEY=replace-me
+DEBUG=True
+
+POSTGRES_DB=bakerstreet_budget
+POSTGRES_USER=bakerstreet_user
+POSTGRES_PASSWORD=replace-me
+DB_HOST=db
+DB_PORT=5432
+
+YNAB_BEARER_TOKEN=replace-me
 YNAB_BUDGET_ID=last-used
+
+ALLOWED_HOSTS=localhost,127.0.0.1
 ```
 
-Keep `.env` out of Git.
+For access from another device on your local network, add your machine's local IP:
 
-## Interview Framing
+```env
+ALLOWED_HOSTS=192.168.1.201,localhost,127.0.0.1
+```
 
-I built BakerStreet Budget as a Django/PostgreSQL dashboard that visualizes budget progress from real YNAB category data. Instead of trying to recreate YNAB, I scoped the project around one focused workflow: syncing category data from the YNAB API, storing it locally, calculating progress values, and displaying those values through progress bars and charts.
+Keep `.env` out of Git. `.env.example` should only contain placeholders.
+
+## Running Locally
+
+Build and start the app:
+
+```bash
+docker compose up --build
+```
+
+Run migrations:
+
+```bash
+docker compose exec web python manage.py migrate
+```
+
+Create an admin user:
+
+```bash
+docker compose exec web python manage.py createsuperuser
+```
+
+Sync YNAB categories:
+
+```bash
+docker compose exec web python manage.py sync_ynab_categories
+```
+
+Open the dashboard:
+
+```text
+http://localhost:8000/dashboard/
+```
+
+## Main Routes
+
+```text
+/dashboard/
+/category_list/
+/admin/
+```
+
+## Notes
+
+YNAB stores money values in milliunits:
+
+```text
+1000 milliunits = $1.00
+```
+
+The app keeps the original YNAB values in the database and formats them for display where needed.

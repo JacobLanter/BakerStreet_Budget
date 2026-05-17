@@ -2,7 +2,9 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.core.management import call_command
 from .models import Category
+from .utils import build_goal_charts
 
+# Runs the YNAB category sync command from the dashboard sync button.
 @login_required
 def sync_ynab_now(request):
     if request.method == "POST":
@@ -10,41 +12,43 @@ def sync_ynab_now(request):
 
     return redirect("dashboard")
 
+# Displays list of active budget categories
 def category_list(request):
     categories = Category.objects.filter(
-        hidden=False,
-        deleted=False,
+    hidden=False,
+    deleted=False,
     ).exclude(
         category_group_name="Internal Master Category"
     )
-
     return render(request, "budget/category_list.html", {"categories" : categories},)
 
+# Displays selected saving and spending goals on the dashboard.
 def dashboard(request):
+    
+    # ----- Base categories -----
+
     categories = Category.objects.filter(
-        hidden=False,
-        deleted=False,
+    hidden=False,
+    deleted=False,
     ).exclude(
         category_group_name="Internal Master Category"
     )
+
+    # ----- Saving Goal -----
 
     target_goals = categories.filter(
     goal_type__in=["TB", "TBD"]
     )
 
-    target_goal_charts = []
+    selected_target_category_ids = request.GET.getlist("target_categories")
 
-    for category in target_goals:
-        if category.goal_target is not None and category.goal_target > 0:
-            percentage = (category.balance / category.goal_target) * 100
-        else:
-            percentage = 0
+    selected_target_categories = target_goals.filter(
+    id__in=selected_target_category_ids
+    )
 
-        target_goal_charts.append({
-            "name": category.name,
-            "percentage": round(percentage, 2),
-            "remaining": round(100 - percentage, 2),
-        })
+    selected_target_goal_charts = build_goal_charts(selected_target_categories)
+
+    # ----- Spending Goals -----
 
     spending_goals = categories.filter(
     goal_type="NEED"
@@ -56,26 +60,14 @@ def dashboard(request):
         id__in=selected_need_category_ids
     )
     
-    selected_need_goal_charts = []
 
-    for category in selected_need_categories:
-        if category.goal_target is not None and category.goal_target > 0:
-            percentage = (category.balance / category.goal_target) * 100
-        else:
-            percentage = 0
-
-        selected_need_goal_charts.append({
-            "name": category.name,
-            "percentage": round(percentage, 2),
-            "remaining": round(100 - percentage, 2),
-        })
+    # ----- Render -----
 
     return render(request, "budget/dashboard.html", {
-        "categories": categories,
         "target_goals": target_goals,
         "spending_goals": spending_goals,
-        "target_goal_charts": target_goal_charts,
-        "selected_need_category_ids": selected_need_category_ids,
+        "selected_target_goal_charts": selected_target_goal_charts,
         "selected_need_categories": selected_need_categories,
-        "selected_need_goal_charts": selected_need_goal_charts,
+        "selected_target_category_ids": selected_target_category_ids,
+        "selected_need_category_ids": selected_need_category_ids,
     })
