@@ -2,6 +2,16 @@
 
 BakerStreet Budget is a small Django dashboard I built to make my YNAB categories easier to review at a glance. Instead of opening YNAB and digging through category groups, the app syncs category data into PostgreSQL and gives me a focused view of saving goals, spending categories, and budget progress.
 
+## Intended Use
+
+This project is intended for local use only.
+
+BakerStreet Budget is designed to run on your own machine with Docker Compose. It is not currently intended for public internet deployment, multi-user hosting, or shared cloud hosting.
+
+Do not expose this application publicly without first adding production-grade security settings, reviewing authentication and authorization, disabling debug mode, configuring HTTPS, and protecting any synced YNAB financial data.
+
+## Project Scope
+
 The project is intentionally narrow: it is not trying to replace YNAB. It is a personal dashboard for the category information I care about most.
 
 ## What It Does
