@@ -1,11 +1,14 @@
 from django.shortcuts import render, redirect
+from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 from django.core.management import call_command
 from .models import Category
 from .utils import build_goal_charts
 
 # Runs the YNAB category sync command from the dashboard sync button.
-@login_required
+@staff_member_required
+@require_POST
 def sync_ynab_now(request):
     if request.method == "POST":
         call_command("sync_ynab_categories")
@@ -13,6 +16,7 @@ def sync_ynab_now(request):
     return redirect("dashboard")
 
 # Displays list of active budget categories
+@login_required
 def category_list(request):
     categories = Category.objects.filter(
     hidden=False,
@@ -23,6 +27,7 @@ def category_list(request):
     return render(request, "budget/category_list.html", {"categories" : categories},)
 
 # Displays selected saving and spending goals on the dashboard.
+@login_required
 def dashboard(request):
     
     # ----- Base categories -----
