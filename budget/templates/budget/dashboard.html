@@ -297,7 +297,7 @@
       position: absolute;
       inset: 0 auto 0 0;
       width: 4px;
-      background: var(--warn);
+      background: var(--accent);
     }
 
     .spending-card h3 {
@@ -453,7 +453,7 @@
                   const { width, height, ctx } = chart;
                   ctx.restore();
 
-                  ctx.fillStyle = "#172033";
+                  ctx.fillStyle = "#16251b";
                   ctx.font = "700 22px Inter, Arial, sans-serif";
                   ctx.textBaseline = "middle";
                   ctx.textAlign = "center";
@@ -474,10 +474,10 @@
                   datasets: [{
                     label: "{{ goal.name|escapejs }}",
                     data: [{{ goal.percentage }}, {{ goal.remaining }}],
-                    backgroundColor: ["#126a6f", "#e4eaf0"],
+                    backgroundColor: ["#2f7d32", "#e2eadf"],
                     borderColor: ["#ffffff", "#ffffff"],
                     borderWidth: 4,
-                    hoverBackgroundColor: ["#0d4f54", "#d9e0ea"]
+                    hoverBackgroundColor: ["#1f5f24", "#d5e4d8"]
                   }]
                 },
                 options: {

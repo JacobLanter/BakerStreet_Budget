@@ -47,7 +47,6 @@ BakerStreet_Budget/
   budget/
     management/commands/sync_ynab_categories.py
     templates/budget/dashboard.html
-    templates/budget/category_list.html
     models.py
     urls.py
     utils.py
@@ -132,7 +131,6 @@ http://localhost:8000/dashboard/
 
 ```text
 /dashboard/
-/category_list/
 /admin/
 ```
 
