@@ -90,7 +90,7 @@ ALLOWED_HOSTS=localhost,127.0.0.1
 For access from another device on your local network, add your machine's local IP:
 
 ```env
-ALLOWED_HOSTS=192.168.1.201,localhost,127.0.0.1
+ALLOWED_HOSTS=localhost,127.0.0.1
 ```
 
 Keep `.env` out of Git. `.env.example` should only contain placeholders.
