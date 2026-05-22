@@ -14,6 +14,8 @@ Do not expose this application publicly without first adding production-grade se
 
 The project is intentionally narrow: it is not trying to replace YNAB. It is a personal dashboard for the category information I care about most.
 
+![BakerStreet Budget dashboard demo](docs/demo.gif)
+
 ## What It Does
 
 - Syncs category data from the YNAB API into a local PostgreSQL database.
